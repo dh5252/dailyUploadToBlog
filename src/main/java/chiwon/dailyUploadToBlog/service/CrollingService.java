@@ -36,8 +36,10 @@ public class CrollingService {
 
         CrolledItemInfo crolledItemInfo = new CrolledItemInfo();
         crolledItemInfo.setDescriptionsImgLink(new ArrayList<>());
+        crolledItemInfo.setDescriptionsLocalLink(new ArrayList<>());
         crolledItemInfo.setReviews(new ArrayList<>());
         crolledItemInfo.setItemUrl(itemUrl);
+        crolledItemInfo.setDescription("");
         try {
 
             Document item = Jsoup.connect(itemUrl)

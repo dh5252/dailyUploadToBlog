@@ -55,6 +55,7 @@ public class SeleniumService {
         WebElement totalReviewElement = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".count")));
         String totalReviewString = totalReviewElement.getText();
         totalReviewString = totalReviewString.substring(0,totalReviewString.length() - 5);
+        totalReviewString = totalReviewString.replace(",", "");
         totalReview = Integer.parseInt(totalReviewString);
 
         if (totalReview >= 10)
@@ -72,11 +73,8 @@ public class SeleniumService {
             wait = new WebDriverWait(driver, Duration.ofSeconds(1000));
             wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("div.sdp-review__article__list__review__content")));
             List<WebElement> pageReviews = driver.findElements(By.cssSelector("div.sdp-review__article__list__review__content"));
-            System.out.println("Size : " + pageReviews.size());
             for (WebElement pageReview : pageReviews) {
                 crolledItemInfo.getReviews().add("review[" + String.valueOf(curReview) + "]: " + pageReview.getText());
-                System.out.println(crolledItemInfo.getReviews().get(curReview - 1));
-
                 if (++curReview > totalReview)
                     break;
             }

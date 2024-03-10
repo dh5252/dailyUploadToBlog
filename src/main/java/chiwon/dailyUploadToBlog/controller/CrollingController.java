@@ -5,6 +5,7 @@ import chiwon.dailyUploadToBlog.dto.SearchConditionDto;
 import chiwon.dailyUploadToBlog.service.CrollingService;
 
 import chiwon.dailyUploadToBlog.service.ImgProcessingService;
+import chiwon.dailyUploadToBlog.service.OcrService;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -24,6 +25,7 @@ public class CrollingController {
     private Environment env;
     private CrollingService crollservice = new CrollingService();
     private ImgProcessingService imgProcessingService = new ImgProcessingService();
+    private OcrService ocrService = new OcrService();
 
     @PostMapping(value = "/crolling")
     public void crolling(@RequestBody SearchConditionDto crollDto) {
@@ -64,10 +66,17 @@ public class CrollingController {
                 for (int j = 0 ; j < imgCnt ; ++j) {
                     resImgCnt = imgProcessingService.processingImage(targetDir + "/origin/" + String.valueOf(j) + ".jpg", targetDir + "/result/", resImgCnt);
                 }
+                for (int j = 0 ; j < resImgCnt ; ++j) {
+                    crolledItemInfoList.get(i).getDescriptionsLocalLink().add(targetDir + "/result/" + String.valueOf(j) + ".jpg");
+                }
+                ocrService.imageToText(crolledItemInfoList.get(i), env.getProperty("clova.ocr.apikey"), env.getProperty("clova.ocr.api.gateway"));
+
+                
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+
 
     }
 

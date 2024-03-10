@@ -6,6 +6,8 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 @Service
 public class ImgProcessingService {
@@ -32,6 +34,7 @@ public class ImgProcessingService {
 
             int width = originImg.getWidth();
             int height = originImg.getHeight();
+            int flag = 0;
 
             int x = 0, y = 0;
 
@@ -43,14 +46,25 @@ public class ImgProcessingService {
                 ImageIO.write(croppedImage, "jpg", new File(destDir + String.valueOf(imgcnt++) + ".jpg"));
                 y += desiredHeight;
                 height -= desiredHeight;
+                flag = 1;
+                if (height == 0) break;
             }
             if (height > 0) {
-                BufferedImage croppedImage = originImg.getSubimage(x, y, width, height);
-                ImageIO.write(croppedImage, "jpg", new File(destDir + String.valueOf(imgcnt++) + ".jpg"));
+                if (flag == 0) {
+                    try {
+                        Files.copy(Paths.get(originImgUrl), Paths.get(destDir + String.valueOf(imgcnt++) + ".jpg"));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    BufferedImage croppedImage = originImg.getSubimage(x, y, width, height);
+                    ImageIO.write(croppedImage, "jpg", new File(destDir + String.valueOf(imgcnt++) + ".jpg"));
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
         return imgcnt;
     }
+
 }
